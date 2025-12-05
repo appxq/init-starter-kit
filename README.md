@@ -1,6 +1,11 @@
-# initCraft Starter Kit
+# initStarterKit
 
 starter-kit version
+
+- Vue3 Vite
+- TypeScript
+- element-plus UI
+- initCraft Dev Tool(low-code)
 
 Use with https://github.com/appxq/init-server-sdk
 
