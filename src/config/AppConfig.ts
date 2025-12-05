@@ -1,0 +1,12 @@
+export const APP_NAME = window.APP_CONFIG.APP_NAME;
+export const APP_SLOGAN = window.APP_CONFIG.APP_SLOGAN;
+export const APP_VERSION = window.APP_CONFIG.APP_VERSION;
+export const APP_LOGO_TYPE = window.APP_CONFIG.APP_LOGO_TYPE; // svg, img
+export const APP_SVG_LOGO = window.APP_CONFIG.APP_SVG_LOGO;
+export const APP_IMG_LOGO = window.APP_CONFIG.APP_IMG_LOGO;
+export const API_URL = window.APP_CONFIG.API_URL;
+export const SERVER_HOST = window.APP_CONFIG.SERVER_HOST;
+export const API_PATH = window.APP_CONFIG.API_PATH;
+export const ASSETS_PATH = window.APP_CONFIG.ASSETS_PATH;
+export const ASSETS_URL = window.APP_CONFIG.ASSETS_URL;
+export const REFRESH_TOKEN = window.APP_CONFIG.REFRESH_TOKEN;

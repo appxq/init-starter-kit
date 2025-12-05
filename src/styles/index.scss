@@ -1,0 +1,120 @@
+// import dark theme
+@use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
+
+// :root {
+//   --el-color-primary: red;
+// }
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100%;
+  overflow-y: hidden;
+  color: var(--el-text-color-regular);
+  font-size:14px;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+}
+
+a {
+  color: var(--el-color-primary);
+}
+
+code {
+  border-radius: 2px;
+  padding: 2px 4px;
+  background-color: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
+}
+
+.el-icon {
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+
+#app{
+  overflow-y: hidden;
+}
+
+.form-field-list {
+  .ghost{
+    content: '';
+    font-size: 0;
+    height: 3px;
+    box-sizing: border-box;
+    background: #409EFF;
+    border: 2px solid #409EFF;
+    outline-width: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+}
+  
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    width: 8px;
+    background: rgba(#101F1C, 0.1);
+    -webkit-border-radius: 2em;
+    -moz-border-radius: 2em;
+    border-radius: 2em;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(#888, 0.4);
+    background-clip: padding-box;
+    min-height: 28px;
+    -webkit-border-radius: 2em;
+    -moz-border-radius: 2em;
+    border-radius: 2em;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(#888, 0.7);
+  }
+
+  .el-button + .el-button {
+    margin-left: 6px;
+  }
+
+  .el-dialog.dialog-form .el-dialog__body{
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+.jse-navigation-bar,
+.jse-tree-mode {
+	border-top-right-radius: 4px;
+	border-top-left-radius: 4px;
+}
+.jse-main .jse-contents {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+}
+
+.el-select-dropdown__header{
+  padding-top: 2px!important;
+  padding-bottom: 2px!important;
+}
+
+.el-dialog .el-dialog__title {
+	font-size: 24px;
+}
+
+.el-input.el-input-group.el-input-group--append, .el-color-picker{
+  vertical-align: middle;
+}
+
+.el-table .cell {
+  line-height: 16px !important;
+}
+
