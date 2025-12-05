@@ -1,4 +1,4 @@
-# initCraft
+# initCraft Starter Kit
 
 starter-kit version
 
