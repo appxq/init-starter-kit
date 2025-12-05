@@ -6,6 +6,9 @@ starter-kit version
 - TypeScript
 - element-plus UI
 - initCraft Dev Tool(low-code)
+- 70 widget/input
+- Full implement Create Form, UI, SQL, API, Report, App, export/import/restore on online
+- Fully customizable
 
 Use with https://github.com/appxq/init-server-sdk
 
