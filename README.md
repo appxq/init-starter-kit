@@ -2,6 +2,8 @@
 
 starter-kit version
 
+Use with https://github.com/appxq/init-server-sdk
+
 ## Install
 
 ```
