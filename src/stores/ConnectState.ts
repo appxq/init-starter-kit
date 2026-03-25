@@ -145,7 +145,7 @@ export const useConnectStateStore = defineStore('connectState', {
 							this.require2FA = true;
 							this.user2Fa = response.data.username || response.data.user_id;
 						} else {
-							localStorage.setItem('user', JSON.stringify(response.data));
+							localStorage.setItem('connect', JSON.stringify(response.data));
 							this.user = response.data;
 							if (!!this.user && !!this.user.connectInfo) {
 								this.connectInfo = this.user.connectInfo;
@@ -181,7 +181,7 @@ export const useConnectStateStore = defineStore('connectState', {
 					// If the login is successful, save the user data and token
 
 					if (!!response.data && !!response.data.user_id) {
-						localStorage.setItem('user', JSON.stringify(response.data));
+						localStorage.setItem('connect', JSON.stringify(response.data));
 						this.user = response.data;
 						if (!!this.user && !!this.user.connectInfo) {
 							this.connectInfo = this.user.connectInfo;
@@ -366,7 +366,7 @@ export const useConnectStateStore = defineStore('connectState', {
 						let myroles: string[] = !!this.user && !!this.user.roles ? deepClone(this.user.roles) : [];
 						response.data.roles = myroles;
 						this.user = response.data;
-						localStorage.setItem('user', JSON.stringify(this.user));
+						localStorage.setItem('connect', JSON.stringify(this.user));
 					}
 
 					if (!!callback) {

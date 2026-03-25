@@ -16,6 +16,7 @@ import draggable from 'vuedraggable';
 import 'sd-render/style.css';
 
 import acl from './config/Acl';
+import VueApexCharts from 'vue3-apexcharts';
 
 const pinia = createPinia();
 const app = createApp(App);
@@ -23,6 +24,7 @@ const app = createApp(App);
 app.use(pinia);
 app.use(ElementPlus);
 app.use(router);
+app.use(VueApexCharts);
 
 const { initApp } = await import('./config/StartApp');
 await initApp();
