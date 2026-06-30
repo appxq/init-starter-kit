@@ -104,6 +104,21 @@ export default defineConfig({
 
 			output: {
 				manualChunks(id: string) {
+					// vue SFC export-helper = leaf chunk (ไม่มี dep) กัน TDZ จาก circular init
+					if (id.includes('plugin-vue:export-helper')) return 'vue-export-helper';
+
+					// ajv + deps ทั้งหมดต้องอยู่ chunk เดียวกัน — vanilla-jsoneditor import ajv แบบ external
+					// CJS deps (json-schema-traverse, fast-uri, fast-deep-equal, require-from-string) ถ้าตกใน vendor
+					// แล้ว ajv chunk เรียก require* ข้าม chunk → CJS exports object ยัง undefined → crash
+					if (
+						id.includes('/ajv/') ||
+						id.includes('/ajv-formats/') ||
+						id.includes('/json-schema-traverse/') ||
+						id.includes('/fast-uri/') ||
+						id.includes('/fast-deep-equal/') ||
+						id.includes('/require-from-string/')
+					) return 'ajv';
+
 					if (id.includes('node_modules')) {
 						const parts = id.split('node_modules/')[1]?.split('/');
 
@@ -143,10 +158,6 @@ export default defineConfig({
 							if (pkg === 'vue' || pkg === 'vue-router' || pkg === 'pinia' || id.includes('vue')) return 'vue-core';
 							//@tiptap
 							if (pkg.search('@tiptap') !== -1) return 'tiptap';
-
-							if (id.includes('ajv/dist')) {
-								return 'ajv';
-							}
 
 							if (id.includes('codemirror')) {
 								return 'codemirror';
