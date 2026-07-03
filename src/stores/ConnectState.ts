@@ -1,7 +1,7 @@
 import { type SdUserLogin } from './../types/User';
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import { API_URL, REFRESH_TOKEN } from '~/config/AppConfig';
+import { API_URL } from '~/config/AppConfig';
 import { ElMessage } from 'element-plus';
 import { type ConnectProject } from '~/types/Connect';
 import { type SdProvider } from '~/types/SdGridType';
@@ -333,11 +333,13 @@ export const useConnectStateStore = defineStore('connectState', {
 			this.stopRefreshTokenTimer();
 			this.router.push('/user/login');
 		},
+		// validate session + refresh user data ตอน boot ผ่าน /me (ผ่าน verifyJWT → backend เลื่อน idle TTL ให้)
+		// absolute ceiling: คง token เดิมเสมอ (ไม่เอา token ใหม่จาก /me มา replace) → เพดาน JWT 30 วันไม่เลื่อน
 		async refreshToken() {
 			if (!!this.user && !!this.user.token) {
 				await axios
 					.post(
-						`${this.host}/user/refresh-token`,
+						`${this.host}/user/me`,
 						{},
 						{
 							headers: {
@@ -346,12 +348,12 @@ export const useConnectStateStore = defineStore('connectState', {
 						}
 					)
 					.then((response) => {
-						// If the login is successful, save the user data and token
-						if (!!response.data && !!response.data.token && this.user != null) {
-							this.user.token = response.data.token;
+						// update เฉพาะ roles/site/unit — คง token เดิมไว้ (กันเพดาน absolute เลื่อน)
+						if (!!response.data && this.user != null) {
 							this.user.roles = response.data.roles;
+							this.user.site = response.data.site;
+							this.user.unit = response.data.unit;
 							localStorage.setItem('connect', JSON.stringify(this.user));
-							this.startRefreshTokenTimer();
 						}
 					})
 					.catch((error) => {
@@ -396,21 +398,9 @@ export const useConnectStateStore = defineStore('connectState', {
 					});
 			}
 		},
-		startRefreshTokenTimer() {
-			let timeout = REFRESH_TOKEN;
-
-			if (!this.user || !this.user.token) return;
-
-			const jwtBase64 = this.user.token.split('.')[1];
-			if (!!jwtBase64) {
-				const payload = JSON.parse(atob(jwtBase64));
-
-				const expires = new Date(payload.exp * 1000);
-				timeout = expires.getTime() - Date.now() - 60 * 1000;
-			}
-
-			this.refreshTokenTimeout = setTimeout(this.refreshToken, timeout);
-		},
+		// no-op: sliding session ย้ายไปจัดการที่ backend แล้ว (verifyJWT เลื่อน idle TTL ทุก request)
+		// + absolute ceiling ที่ JWT — frontend ไม่ต้องตั้ง refresh timer อีก (เก็บ signature ไว้เพื่อ compat จุดเรียกเดิม)
+		startRefreshTokenTimer() {},
 		stopRefreshTokenTimer() {
 			clearTimeout(this.refreshTokenTimeout);
 		},
