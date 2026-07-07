@@ -244,9 +244,6 @@ export const useConnectStateStore = defineStore('connectState', {
 							// คง public_key จาก .env เสมอ (user.connectInfo จาก backend ไม่มี key นี้) — ใช้ decode form_model
 							// this.connectInfo.public_key = import.meta.env.VITE_PUBLIC_KEY;
 
-							// [TEMP-TEST] key ขยะ — พิสูจน์ว่า "ตัว key" หรือ "แค่ side-effect" ทำให้ render (ถอดออกหลังเทส)
-							this.connectInfo.public_key = 'x';
-
 							this.startRefreshTokenTimer();
 							this.ensureNotifySocket(); // เปิด notify socket ครั้งเดียวหลัง login สำเร็จ
 							if (!!this.returnUrl) {
