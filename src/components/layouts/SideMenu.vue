@@ -34,11 +34,11 @@
 					<template v-for="(subItem, subIndex) in item[subMenuField]" :key="subItem._id">
 						<el-menu-item
 							class="sub-menu-item"
-							:index="!!pathField && !!subMenuPrefix && !!subItem[`${subMenuPrefix}${pathField}`] ? subItem[`${subMenuPrefix}${pathField}`] : index"
-							v-can.any="!!roleField && !!subMenuPrefix && !!subItem[`${subMenuPrefix}${roleField}`] ? subItem[`${subMenuPrefix}${roleField}`] : ['user']"
-							@click="!!pathField && !!subMenuPrefix && !!subItem[`${subMenuPrefix}${pathField}`] ? handleClick(subItem, subIndex, true) : undefined">
-							<svg-icon class="menu-icon" v-if="!!iconField && !!subMenuPrefix" :icon-name="subItem[`${subMenuPrefix}${iconField}`]" />
-							<span class="menu-label" v-if="!!labelField && !!subMenuPrefix">{{ subItem[`${subMenuPrefix}${labelField}`] }}</span>
+							:index="!!pathField && !!subValue(subItem, pathField) ? subValue(subItem, pathField) : index"
+							v-can.any="!!roleField && !!subValue(subItem, roleField) ? subValue(subItem, roleField) : ['user']"
+							@click="!!pathField && !!subValue(subItem, pathField) ? handleClick(subItem, subIndex, true) : undefined">
+							<svg-icon class="menu-icon" v-if="!!iconField" :icon-name="subValue(subItem, iconField)" />
+							<span class="menu-label" v-if="!!labelField">{{ subValue(subItem, labelField) }}</span>
 						</el-menu-item>
 					</template>
 				</el-sub-menu>
@@ -190,10 +190,15 @@ export default defineComponent({
 	},
 	setup(props, ctx) {},
 	methods: {
-		handleClick(row: any, index: number, subMenu: boolean = false) {
+		// sub item field lookup — ถ้ากำหนด subMenuPrefix จะอ่าน key แบบมี prefix (เช่น sub_path)
+		// ถ้าไม่กำหนด จะอ่าน key เดียวกับ menu หลัก (path, label, icon, role)
+		subValue(subItem: any, field: string) {
+			return !!this.subMenuPrefix ? subItem[`${this.subMenuPrefix}${field}`] : subItem[field];
+		},
+		handleClick(row: any, index: number | string, subMenu: boolean = false) {
 			if (!!subMenu) {
-				if (!!this.pathField && !!this.subMenuPrefix && !!row[`${this.subMenuPrefix}${this.pathField}`]) {
-					this.router.push(row[`${this.subMenuPrefix}${this.pathField}`]);
+				if (!!this.pathField && !!this.subValue(row, this.pathField)) {
+					this.router.push(this.subValue(row, this.pathField));
 				}
 			} else {
 				if (!!this.pathField && !!row[this.pathField]) {
