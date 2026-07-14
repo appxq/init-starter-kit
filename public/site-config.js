@@ -1,6 +1,11 @@
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
-const SERVER_HOST = isLocal ? 'http://localhost:3005' : 'https://api.initcraft.com';
+// production host — ถูกแทนค่าตอน build จาก VITE_SERVER_HOST ใน .env (ดู vite.config.ts)
+// ถ้า build โดยไม่ตั้งค่า → เป็น '' → fallback ไป https://api.initcraft.com
+// dev บน localhost ไม่แตะบรรทัดนี้ (ใช้ branch localhost:3005)
+const ENV_SERVER_HOST = '__VITE_SERVER_HOST__';
+
+const SERVER_HOST = isLocal ? 'http://localhost:3005' : ENV_SERVER_HOST || 'https://api.initcraft.com';
 const API_PATH = '/api';
 const ASSETS_PATH = '/assets';
 const API_URL = SERVER_HOST + API_PATH;

@@ -1,6 +1,7 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv, type Plugin } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
+import { readFileSync, writeFileSync } from 'fs';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
@@ -12,7 +13,29 @@ import { presetAttributify, presetIcons, presetWind3, transformerDirectives, tra
 // https://vitejs.dev/config/
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
-export default defineConfig({
+/**
+ * แทนค่า placeholder __VITE_SERVER_HOST__ ใน dist/site-config.js ตอน build
+ * ด้วยค่า VITE_SERVER_HOST (จาก .env หรือ build env ของ Coolify)
+ * site-config.js เป็นไฟล์ static ที่ browser โหลดตรง ๆ — inject ได้แค่ตอน build เท่านั้น
+ */
+function siteConfigHostPlugin(serverHost: string): Plugin {
+	return {
+		name: 'inject-site-config-host',
+		apply: 'build',
+		closeBundle() {
+			const file = resolve(__dirname, 'dist/site-config.js');
+			const content = readFileSync(file, 'utf-8').replace(/__VITE_SERVER_HOST__/g, serverHost);
+			writeFileSync(file, content);
+		},
+	};
+}
+
+export default defineConfig(({ mode }) => {
+	const env = loadEnv(mode, process.cwd(), 'VITE_');
+	// .env (local/Vercel) → loadEnv; build env (Coolify/Docker) → process.env
+	const serverHost = env.VITE_SERVER_HOST || process.env.VITE_SERVER_HOST || '';
+
+	return {
 	resolve: {
 		alias: {
 			'~': resolve(__dirname, 'src'),
@@ -35,6 +58,7 @@ export default defineConfig({
 		exclude: ['XLSX', 'docx', 'dompurify'],
 	},
 	plugins: [
+		siteConfigHostPlugin(serverHost),
 		vue(),
 		// Icons({
 		//   // experimental
@@ -216,4 +240,5 @@ export default defineConfig({
 		},
 		outDir: 'dist',
 	},
+	};
 });

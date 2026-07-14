@@ -3,6 +3,7 @@
 
 interface ImportMetaEnv {
 	readonly VITE_PUBLIC_KEY: string;
+	readonly VITE_SERVER_HOST: string;
 }
 
 interface ImportMeta {
