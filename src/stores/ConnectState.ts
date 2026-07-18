@@ -78,21 +78,30 @@ export const useConnectStateStore = defineStore('connectState', {
 			let pingInterval: any = null;
 			let connStatus: boolean = false; // เคยต่อสำเร็จอย่างน้อย 1 ครั้ง → อนุญาตให้ reconnect
 			let manualClose: boolean = false; // caller สั่งปิดเอง → ห้าม reconnect
+			let reconnectAttempts: number = 0; // นับรอบ reconnect ต่อเนื่อง → คุม exponential backoff (reset เมื่อต่อติด)
 			let socket!: WebSocket; // mutable: reconnect จะแทนที่ตัวนี้ใน closure เดิม (handle ที่ caller ถือไม่เปลี่ยน)
-			const wsUrl = `${protocol}://${domain}/v1/ws/${channel}?client=${clientId}&widget=${widgetId}&token=${this.user?.token}`;
 
 			// สร้าง socket + ผูก handler หนึ่งตัว — เรียกซ้ำได้ตอน reconnect โดยไม่สร้าง connection ลอยที่ไม่มีใครถือ handle
 			const setupSocket = () => {
+				// อ่าน token สดทุกครั้ง — reconnect หลัง token เปลี่ยน (เช่น switch unit) จะไม่ใช้ token เก่าค้าง
+				const wsUrl = `${protocol}://${domain}/v1/ws/${channel}?client=${clientId}&widget=${widgetId}&token=${this.user?.token}`;
 				socket = new WebSocket(wsUrl);
 
 				socket.onmessage = (event) => {
-					if (!!onMessage) {
-						onMessage(JSON.parse(event.data));
+					// guard: frame เพี้ยน 1 อัน ไม่ควรทำ handler พังทั้งตัว
+					try {
+						const parsed = JSON.parse(event.data);
+						if (!!onMessage) {
+							onMessage(parsed);
+						}
+					} catch (err) {
+						console.error(`(channel:${channel}) ` + 'invalid ws message', err);
 					}
 				};
 
 				socket.onopen = (event) => {
 					connStatus = true;
+					reconnectAttempts = 0; // ต่อติดแล้ว → รีเซ็ต backoff
 					console.log(`(channel:${channel}) ` + 'onSockerOpen...');
 
 					pingInterval = setInterval(() => {
@@ -117,10 +126,14 @@ export const useConnectStateStore = defineStore('connectState', {
 
 					// reconnect เฉพาะตอนที่เคยต่อติดแล้วหลุดเอง และ caller ยังไม่ได้สั่งปิด
 					if (connStatus && !manualClose) {
+						// exponential backoff + jitter — กัน reconnect storm ตอน server restart
+						// (user เปิดหลาย channel เด้งพร้อมกันจะกระแทก server ซ้ำ) 1s→2s→4s…สูงสุด 30s + สุ่ม 0–1s
+						const delay = Math.min(30000, 1000 * 2 ** reconnectAttempts) + Math.random() * 1000;
+						reconnectAttempts++;
 						wsTimeout = setTimeout(() => {
 							console.log(`(channel:${channel}) ` + 'Attempting to reconnect...');
 							setupSocket(); // แทนที่ socket เดิมใน closure — ไม่สร้าง handle ลอย
-						}, 5000);
+						}, delay);
 					}
 				};
 			};
