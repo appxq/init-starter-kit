@@ -81,6 +81,10 @@
 				<el-icon><SetUp /></el-icon> Manage Setting
 			</el-menu-item>
 
+			<el-menu-item v-if="!!appState.params['sys_tmt_ui']" v-can.any="['super', 'admin', 'manager']" index="/admin/tmt-manager" @click="router.push('/admin/tmt-manager')">
+				<el-icon><FirstAidKit /></el-icon> Manage TMT
+			</el-menu-item>
+
 			<el-divider style="margin: 5px 0" />
 			<el-menu-item index="logout" @click="userState.logout()">
 				<el-icon><Lock /></el-icon> Logout

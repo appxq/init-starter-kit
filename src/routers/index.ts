@@ -91,6 +91,15 @@ const routes: Array<RouteRecordRaw> = [
 		component: () => import('~/views/core/SettingManager.vue'),
 	},
 	{
+		path: '/admin/tmt-manager',
+		name: 'tmt-manager',
+		meta: {
+			title: 'TMT Manager',
+			anyCan: ['super', 'admin', 'manager'],
+		},
+		component: () => import('~/views/core/TmtManager.vue'),
+	},
+	{
 		path: '/unauthorized',
 		name: 'unauthorized',
 		meta: {
