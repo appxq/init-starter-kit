@@ -1,7 +1,7 @@
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
@@ -22,10 +22,13 @@ function siteConfigHostPlugin(serverHost: string): Plugin {
 	return {
 		name: 'inject-site-config-host',
 		apply: 'build',
-		closeBundle() {
-			const file = resolve(__dirname, 'dist/site-config.js');
-			const content = readFileSync(file, 'utf-8').replace(/__VITE_SERVER_HOST__/g, serverHost);
-			writeFileSync(file, content);
+		// emit เป็น output asset — vite เขียน dist/site-config.js เอง (ไม่พึ่ง disk/public-copy timing)
+		// Vite 7.3+ รัน closeBundle ก่อน flush ไฟล์ลง disk → เขียน dist/ ตรง ๆ ไม่ได้ (ENOENT)
+		// emitFile ยังทำให้ asset นี้ชนะ public/site-config.js ที่ vite copy มา (ชื่อชนกัน → generated ชนะ)
+		generateBundle() {
+			const src = resolve(__dirname, 'public/site-config.js');
+			const content = readFileSync(src, 'utf-8').replace(/__VITE_SERVER_HOST__/g, serverHost);
+			this.emitFile({ type: 'asset', fileName: 'site-config.js', source: content });
 		},
 	};
 }
