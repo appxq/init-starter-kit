@@ -29,3 +29,6 @@ dist-ssr
 *.sw?
 package-lock.json
 stats.html
+# lib ที่ initcraft คัดมาให้ตอน npm run lib — ของ generated ห้าม commit
+# (ไม่มีโฟลเดอร์นี้ = vite กลับไปใช้ sd-render จาก registry อัตโนมัติ → Docker build ไม่กระทบ)
+vendor/

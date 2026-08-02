@@ -1,7 +1,7 @@
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync, statSync } from 'fs';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
@@ -33,6 +33,31 @@ function siteConfigHostPlugin(serverHost: string): Plugin {
 	};
 }
 
+// ── sd-render ตัว local (ถ้ามี) ─────────────────────────────────────────────
+// ตัดขั้นตอน "publish npm → npm i" ออกจาก dev loop: แก้ initcraft → npm run lib → รีเฟรชที่นี่จบ
+// (`npm run lib` ของ initcraft คัด dist-lib มาลง vendor/ ให้เองตอนท้าย — ดู postbuild-lib.ts)
+//
+// 🔴 ต้องวางไว้ "ในโปรเจกต์นี้" ไม่ใช่ alias ข้ามไป ../initcraft/dist-lib
+//    node resolution เดินหา node_modules จากตำแหน่งไฟล์ ⇒ ชี้ข้าม repo แล้ว element-plus/tiptap
+//    จะถูกดึงจาก initcraft/node_modules แทน (เจอจริง: sass พังที่ theme-chalk/src/card.scss)
+// 🔴 vendor/ อยู่นอก node_modules ⇒ `npm i` ไม่ลบทิ้ง
+//
+// auto-detect: ไม่มีโฟลเดอร์ = ใช้ sd-render จาก registry ตามเดิม
+//   ⇒ Docker build (ไม่มี vendor/ เพราะ .gitignore) ทำงานเหมือนเดิมทุกประการ
+// SD_RENDER_LOCAL=0 = บังคับใช้ตัวจาก registry (เทียบก่อน deploy ว่าที่ publish ไว้ใช้ได้จริง)
+const LOCAL_LIB_DIR = resolve(__dirname, 'vendor/sd-render');
+const LOCAL_LIB_ENTRY = resolve(LOCAL_LIB_DIR, 'sd-render.es.js');
+const LOCAL_LIB_CSS = resolve(LOCAL_LIB_DIR, 'sd-render.style.css');
+const useLocalLib = process.env.SD_RENDER_LOCAL !== '0' && existsSync(LOCAL_LIB_ENTRY) && existsSync(LOCAL_LIB_CSS);
+
+// บอกทุกครั้งว่ากำลังใช้ตัวไหน + build เมื่อไหร่ — ไม่งั้น vendor เก่าค้างแล้วนั่งงงว่าทำไมแก้แล้วไม่เปลี่ยน
+if (useLocalLib) {
+	const built = statSync(LOCAL_LIB_ENTRY).mtime.toLocaleString('th-TH');
+	console.log(`\x1b[36m[sd-render]\x1b[0m ใช้ lib จาก vendor/sd-render (build เมื่อ ${built}) — SD_RENDER_LOCAL=0 เพื่อกลับไปใช้ของ registry`);
+} else if (process.env.SD_RENDER_LOCAL === '0') {
+	console.log('\x1b[33m[sd-render]\x1b[0m บังคับใช้ตัวจาก node_modules (registry)');
+}
+
 export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd(), 'VITE_');
 	// .env (local/Vercel) → loadEnv; build env (Coolify/Docker) → process.env
@@ -40,13 +65,21 @@ export default defineConfig(({ mode }) => {
 
 	return {
 	resolve: {
-		alias: {
-			'~': resolve(__dirname, 'src'),
-			process: 'process/browser',
-			stream: 'stream-browserify',
-			zlib: 'browserify-zlib',
-			util: 'util',
-		},
+		// array form ไม่ใช่ object: ต้องคุมลำดับให้ 'sd-render/style.css' ถูกจับก่อน 'sd-render'
+		// (object alias จับแบบ prefix → 'sd-render' จะกิน 'sd-render/style.css' ไปด้วยแล้วได้ path เพี้ยน)
+		alias: [
+			...(useLocalLib
+				? [
+						{ find: /^sd-render\/style\.css$/, replacement: LOCAL_LIB_CSS },
+						{ find: /^sd-render$/, replacement: LOCAL_LIB_ENTRY },
+					]
+				: []),
+			{ find: '~', replacement: resolve(__dirname, 'src') },
+			{ find: 'process', replacement: 'process/browser' },
+			{ find: 'stream', replacement: 'stream-browserify' },
+			{ find: 'zlib', replacement: 'browserify-zlib' },
+			{ find: 'util', replacement: 'util' },
+		],
 		extensions: ['.js', '.vue', '.json', '.ts', 'jsx'],
 	},
 	css: {
