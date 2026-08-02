@@ -10221,7 +10221,7 @@ const Nh = /* @__PURE__ */ U(xm, [["render", Oh], ["__scopeId", "data-v-01b66da0
 function nl(e) {
   return e.includes("admin") || e.includes("super");
 }
-const jh = Eo(() => import("./sd-render-BFNIqCqx.js").then((e) => e.S)), Uh = O({
+const jh = Eo(() => import("./sd-render-ChVpUgVm.js").then((e) => e.S)), Uh = O({
   name: "SdCrudForm",
   components: {
     SdFormRenderAsync: jh
