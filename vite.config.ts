@@ -58,7 +58,19 @@ if (useLocalLib) {
 	console.log('\x1b[33m[sd-render]\x1b[0m บังคับใช้ตัวจาก node_modules (registry)');
 }
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
+	// 🔴 build production ต้องมี vendor/sd-render เสมอ — โฟลเดอร์นี้ commit ไว้ใน git แล้ว
+	//    (ตัดขั้นตอน npm publish ออกจากรอบ deploy — ดูหมายเหตุใน .gitignore)
+	//    ไม่มี = มีคนเผลอลบ / .dockerignore ตัดทิ้ง ⇒ ต้องดังตรงนี้
+	//    ไม่งั้นจะไปดึง sd-render ตัวเก่าจาก registry มา build แล้ว deploy ขึ้นไปเงียบๆ
+	if (command === 'build' && !useLocalLib && process.env.SD_RENDER_LOCAL !== '0') {
+		throw new Error(
+			'[sd-render] ไม่พบ vendor/sd-render — build ตอนนี้จะได้ lib ตัวเก่าจาก registry\n' +
+				'  แก้: cd ../initcraft && npm run lib   (คัดลง vendor/ ให้เอง)\n' +
+				'  ถ้าตั้งใจจะใช้ตัวจาก registry จริงๆ: SD_RENDER_LOCAL=0 npm run build',
+		);
+	}
+
 	const env = loadEnv(mode, process.cwd(), 'VITE_');
 	// .env (local/Vercel) → loadEnv; build env (Coolify/Docker) → process.env
 	const serverHost = env.VITE_SERVER_HOST || process.env.VITE_SERVER_HOST || '';
