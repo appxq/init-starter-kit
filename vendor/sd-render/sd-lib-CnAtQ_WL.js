@@ -330,7 +330,10 @@ const gw = [
   "fetch",
   "XMLHttpRequest",
   "WebSocket",
-  "localStorage",
+  // localStorage เปิดให้ใช้ได้ (2026-08-04) — จอสั่งยา CPOE ต้องเก็บตะกร้าไว้ระหว่างที่หมอถูกเรียกออกจากห้อง
+  // popup ตั้ง backdrop:false อยู่แล้ว (กดนอกกล่องไม่ปิด) แต่กัน reload/ปิดแท็บไม่ได้ → ต้องมีที่เก็บจริง
+  // ⚠️ key ที่เขียนจาก event ควรตั้ง prefix ของตัวเอง (เช่น `cpoe:cart:<visitId>`) กันชนกับ key ของ app
+  // 'localStorage',
   "sessionStorage",
   "indexedDB",
   "document",
@@ -10221,7 +10224,7 @@ const Nh = /* @__PURE__ */ U(xm, [["render", Oh], ["__scopeId", "data-v-01b66da0
 function nl(e) {
   return e.includes("admin") || e.includes("super");
 }
-const jh = Eo(() => import("./sd-render-ChVpUgVm.js").then((e) => e.S)), Uh = O({
+const jh = Eo(() => import("./sd-render-BDK1UnQw.js").then((e) => e.S)), Uh = O({
   name: "SdCrudForm",
   components: {
     SdFormRenderAsync: jh
