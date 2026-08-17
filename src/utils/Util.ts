@@ -75,6 +75,8 @@ export function isEmptyStr(str: any): boolean {
 }
 
 export function isEmptyObj(obj: any): boolean {
+	// null/undefined ถือว่าว่าง — เดิม Object.keys() โยน TypeError ทำให้ setup ของ component พังทั้งหน้า
+	if (obj === null || obj === undefined) return true;
 	return Object.keys(obj).length === 0;
 }
 
