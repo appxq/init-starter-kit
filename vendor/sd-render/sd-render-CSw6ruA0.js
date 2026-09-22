@@ -1,5 +1,5 @@
 import { defineComponent as C, inject as A, openBlock as l, createElementBlock as c, normalizeClass as S, renderSlot as Pe, createBlock as a, withCtx as u, createTextVNode as P, toDisplayString as y, createCommentVNode as b, getCurrentInstance as Ii, withDirectives as Q, resolveDynamicComponent as N, mergeProps as ie, Fragment as v, renderList as T, vShow as X, resolveComponent as Z, normalizeStyle as j, createSlots as Y, createElementVNode as F, createVNode as h, computed as _, useCssVars as qe, withModifiers as U, ref as R, nextTick as Ri, reactive as Mi, markRaw as fe, h as ki } from "vue";
-import { ah as I, ai as Oi, U as V, aj as Je, ak as D, al as $, am as pe, an as we, ao as Pi, ap as se, aq as $i, ar as Ei, as as Li, at as ji, au as Ke, av as Di, aw as Ti, ax as Vi, ay as Ui, az as Oe, aA as Ce, aB as Bi, aC as zi, aD as z, a as Ai, aE as Ni, s as Ze, L as Hi, c as Wi, d as Gi, e as qi, f as Ji, h as Qe, H as ne, o as te, p as Ye, r as Xe, q as _e, aF as Ki, C as Se, D as Zi, E as xe, M as Qi, aG as ei, aH as Yi, aI as Xi, aJ as ii, aK as ti, aL as Te, aM as Ve, aN as Ue, aO as ve, aP as _i, aQ as xi, aR as et, aS as it, aT as tt, F as ot, aU as oi, O as lt, I as li, aV as ce, l as $e, J as nt, N as st, K as ni, aW as rt, aX as at, T as dt, m as si, _ as ri, aY as ut, aZ as ft, a_ as pt, a$ as mt, b0 as ht, b1 as Be, V as ct, b2 as bt, b3 as gt, i as Ft, j as yt } from "./sd-lib-B9ybIuMc.js";
+import { ah as I, ai as Oi, U as V, aj as Je, ak as D, al as $, am as pe, an as we, ao as Pi, ap as se, aq as $i, ar as Ei, as as Li, at as ji, au as Ke, av as Di, aw as Ti, ax as Vi, ay as Ui, az as Oe, aA as Ce, aB as Bi, aC as zi, aD as z, a as Ai, aE as Ni, s as Ze, L as Hi, c as Wi, d as Gi, e as qi, f as Ji, h as Qe, H as ne, o as te, p as Ye, r as Xe, q as _e, aF as Ki, C as Se, D as Zi, E as xe, M as Qi, aG as ei, aH as Yi, aI as Xi, aJ as ii, aK as ti, aL as Te, aM as Ve, aN as Ue, aO as ve, aP as _i, aQ as xi, aR as et, aS as it, aT as tt, F as ot, aU as oi, O as lt, I as li, aV as ce, l as $e, J as nt, N as st, K as ni, aW as rt, aX as at, T as dt, m as si, _ as ri, aY as ut, aZ as ft, a_ as pt, a$ as mt, b0 as ht, b1 as Be, V as ct, b2 as bt, b3 as gt, i as Ft, j as yt } from "./sd-lib-CwwtJT76.js";
 import { useMediaQuery as vt, useDark as G } from "@vueuse/core";
 import { ElTag as re, ElCard as ai, ElTooltip as ae, ElIcon as be, ElCollapse as wt, ElCollapseItem as Ct, ElCol as ge, ElRow as Fe, ElScrollbar as St, ElSpace as It, ElButton as W, ElTabs as Rt, ElTabPane as Mt, ElAlert as di, ElFormItem as ui, ElInput as ye, ElAvatar as kt, ElDialog as Ie, ElButtonGroup as Ot, ElPopconfirm as he, ElBadge as Pt, ElCheckboxGroup as $t, ElCheckboxButton as Et, ElCheckbox as Lt, ElColorPicker as jt, ElDivider as fi, ElDropdown as Dt, ElDropdownMenu as Tt, ElDropdownItem as Vt, ElUpload as Ee, ElAutocomplete as Ut, ElImage as pi, ElLink as Bt, ElInputNumber as zt, ElInputOtp as At, ElProgress as Nt, ElRadioGroup as mi, ElRadioButton as Ht, ElRadio as hi, ElRate as Wt, ElSegmented as Gt, ElSelect as qt, ElOption as Jt, ElSlider as Kt, ElStatistic as Zt, ElSteps as Qt, ElStep as Yt, ElSwitch as Xt, ElInputTag as _t, ElText as xt, ElTimePicker as ci, ElTimeSelect as eo, ElTour as io, ElTourStep as to, ElForm as oo, ElLoadingDirective as lo } from "element-plus/es";
 import "element-plus/es/components/base/style/index";
@@ -4633,6 +4633,10 @@ const Tn = /* @__PURE__ */ I(jn, [["render", Dn], ["__scopeId", "data-v-41c9d41a
     isLatex() {
       return ["latex", "stex", "tex"].includes(this.field.options.lang);
     },
+    // gate ปุ่ม Validate — editor ภาษา Typst (report template)
+    isTypst() {
+      return this.field.options.lang === "typst";
+    },
     fieldValue: {
       get() {
         if (this.fieldModel !== void 0 && this.fieldModel !== null)
@@ -4659,7 +4663,8 @@ const Tn = /* @__PURE__ */ I(jn, [["render", Dn], ["__scopeId", "data-v-41c9d41a
   },
   methods: {
     // 3b-wire — compile template ที่พิมพ์ค้าง (server-side) แล้ว feed error กลับเป็น diagnostics ในบรรทัดที่ผิด
-    async validateLatex() {
+    // latex → create-latex {pdf_latex} · typst → create-typst {pdf_typst} (response รูปแบบเดียวกัน)
+    async validateTemplate() {
       const e = this.$refs.fieldEditor, i = this.getFormRef()?.formData?._id;
       if (!i) {
         x.warning("Save the report before validating.");
@@ -4668,11 +4673,12 @@ const Tn = /* @__PURE__ */ I(jn, [["render", Dn], ["__scopeId", "data-v-41c9d41a
       const t = this.globalUserState?.host, o = this.globalUserState?.user?.token;
       this.validating = !0;
       try {
+        const n = this.isTypst ? { reportId: i, params: {}, pdf_typst: this.fieldValue } : { reportId: i, params: {}, pdf_latex: this.fieldValue };
         await le.post(
-          `${t}/v1/files/create-latex`,
-          { reportId: i, params: {}, pdf_latex: this.fieldValue },
+          `${t}/v1/files/${this.isTypst ? "create-typst" : "create-latex"}`,
+          n,
           { headers: { Authorization: `Bearer ${o}` }, responseType: "blob" }
-        ), e?.setDiagnostics?.([]), x.success("LaTeX compiled successfully.");
+        ), e?.setDiagnostics?.([]), x.success(`${this.isTypst ? "Typst" : "LaTeX"} compiled successfully.`);
       } catch (n) {
         let m = "Compile failed.", s = [];
         try {
@@ -4716,12 +4722,12 @@ function zn(e, i, t, o, n, m) {
     "sub-form-row-id": e.subFormRowId
   }, {
     default: u(() => [
-      e.isLatex && !e.builderStatus ? (l(), c("div", Bn, [
+      (e.isLatex || e.isTypst) && !e.builderStatus ? (l(), c("div", Bn, [
         h(s, {
           size: e.widgetSize,
           loading: e.validating,
           plain: "",
-          onClick: e.validateLatex
+          onClick: e.validateTemplate
         }, {
           default: u(() => [...i[1] || (i[1] = [
             P("Validate", -1)
@@ -4750,7 +4756,7 @@ function zn(e, i, t, o, n, m) {
     _: 1
   }, 8, ["build-rules", "field", "builder", "builder-status", "parent-field", "parent-list", "index-of-parent-list", "sub-form-row-index", "sub-form-col-index", "sub-form-row-id"]);
 }
-const An = /* @__PURE__ */ I(Un, [["render", zn], ["__scopeId", "data-v-1a3ed238"]]), Nn = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const An = /* @__PURE__ */ I(Un, [["render", zn], ["__scopeId", "data-v-a2342334"]]), Nn = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: An
 }, Symbol.toStringTag, { value: "Module" })), Hn = C({
