@@ -10642,7 +10642,7 @@ const Ef = /* @__PURE__ */ j(Rc, [["render", Pf], ["__scopeId", "data-v-01b66da0
 function zi(e) {
   return e.includes("admin") || e.includes("super");
 }
-const Vf = Rl(() => import("./sd-render-B1DdCmFf.js").then((e) => e.S)), Af = R({
+const Vf = Rl(() => import("./sd-render-B7GLc2ka.js").then((e) => e.S)), Af = R({
   name: "SdCrudForm",
   components: {
     SdFormRenderAsync: Vf
@@ -31333,7 +31333,7 @@ function ti(e, t) {
   const i = Nw(e[t.allDay]);
   let o = ga(e[t.end]);
   (!o || o < a) && (o = i ? a.slice(0, 10) + "T23:59" : Y(a).add(60, "minute").format(bt));
-  const l = xt(e[t.repeatMode]), n = l === "daily" || l === "weekly" || l === "monthly" ? { mode: l, days: Rw(e[t.repeatDays]), until: yl(e[t.repeatUntil]) } : null, d = Yt(e[t.overrides], {}), h = {};
+  const l = xt(e[t.repeatMode]), n = l === "daily" || l === "weekly" || l === "monthly" || l === "yearly" ? { mode: l, days: Rw(e[t.repeatDays]), until: yl(e[t.repeatUntil]) } : null, d = Yt(e[t.overrides], {}), h = {};
   for (const [m, y] of Object.entries(d || {}))
     !y || typeof y != "object" || (h[m] = {
       ...y,
@@ -31375,7 +31375,7 @@ function vl(e, t, a) {
     const S = se(_);
     if (S < e.start.slice(0, 10)) continue;
     if (y && S > y) break;
-    if (!(m.mode === "daily" ? !0 : m.mode === "weekly" ? m.days.length ? m.days.includes(_.day()) : _.day() === d.day() : _.date() === d.date()) || e.exdates.includes(S)) continue;
+    if (!(m.mode === "daily" || m.mode === "weekly" && (m.days.length ? m.days.includes(_.day()) : _.day() === d.day()) || m.mode === "monthly" && _.date() === d.date() || m.mode === "yearly" && _.month() === d.month() && _.date() === d.date()) || e.exdates.includes(S)) continue;
     const g = e.overrides[S] || {}, p = g.start || S + "T" + d.format("HH:mm"), k = g.end || Y(p).add(h, "minute").format(bt);
     n(p, k) && w.push({
       ...i,
@@ -31504,6 +31504,7 @@ const Sl = {
     repeatDaily: "Repeats daily",
     repeatWeekly: "Repeats weekly",
     repeatMonthly: "Repeats monthly",
+    repeatYearly: "Repeats yearly",
     editOcc: "Edit this event",
     fTitle: "Title",
     fCalendar: "Calendar",
@@ -31540,6 +31541,7 @@ const Sl = {
     repeatDaily: "ซ้ำทุกวัน",
     repeatWeekly: "ซ้ำทุกสัปดาห์",
     repeatMonthly: "ซ้ำทุกเดือน",
+    repeatYearly: "ซ้ำทุกปี",
     editOcc: "แก้ไขเฉพาะครั้งนี้",
     fTitle: "ชื่อกิจกรรม",
     fCalendar: "ปฏิทิน",
@@ -31947,7 +31949,7 @@ const dt = 48, Kw = dt * 24, ca = 15, xw = 4, Gw = 26, Yw = 21, Kn = 104, fa = K
     },
     repeatText(e) {
       const t = this.masterOf(e)?.repeat?.mode;
-      return t === "daily" ? this.t.repeatDaily : t === "monthly" ? this.t.repeatMonthly : this.t.repeatWeekly;
+      return t === "daily" ? this.t.repeatDaily : t === "monthly" ? this.t.repeatMonthly : t === "yearly" ? this.t.repeatYearly : this.t.repeatWeekly;
     },
     masterOf(e) {
       return this.allMasters.find((t) => t.id === e.masterId);
@@ -32003,7 +32005,7 @@ const dt = 48, Kw = dt * 24, ca = 15, xw = 4, Gw = 26, Yw = 21, Kn = 104, fa = K
       if (i.options?.where && n.push("(" + i.options.where + ")"), o && this.rangeQuery) {
         const d = this.fm;
         n.push(
-          `(${d.start} <= :cal_to AND (${d.end} >= :cal_from OR ((${d.end} IS NULL OR ${d.end} = '') AND ${d.start} >= :cal_from) OR (${d.repeatMode} IN ('daily','weekly','monthly') AND (${d.repeatUntil} IS NULL OR ${d.repeatUntil} = '' OR ${d.repeatUntil} >= :cal_date_from))))`
+          `(${d.start} <= :cal_to AND (${d.end} >= :cal_from OR ((${d.end} IS NULL OR ${d.end} = '') AND ${d.start} >= :cal_from) OR (${d.repeatMode} IN ('daily','weekly','monthly','yearly') AND (${d.repeatUntil} IS NULL OR ${d.repeatUntil} = '' OR ${d.repeatUntil} >= :cal_date_from))))`
         );
       }
       return o && this.parentId && (l.params.xparentx = this.parentId, n.push("xparentx = CONVERT(:xparentx, 'objectId')")), n.length && (l.options.where = n.join(" AND ")), l.options.orderBy || (l.options.orderBy = [{ column: this.fm.start, sort: "ASC" }]), a.search && (l.options.search = [this.fm.title, this.fm.location, this.fm.note], l.params.q = `%${a.search}%`), l;
@@ -33052,7 +33054,7 @@ function ck(e, t, a, i, o, l) {
     }, 8, ["modelValue", "title"])
   ], 6);
 }
-const n_ = /* @__PURE__ */ j(aS, [["render", ck], ["__scopeId", "data-v-85e3d48d"]]);
+const n_ = /* @__PURE__ */ j(aS, [["render", ck], ["__scopeId", "data-v-0b619ac6"]]);
 function Jt(e) {
   const t = e.secure ? "wss" : "ws", a = e.token ? `?token=${encodeURIComponent(e.token)}` : "";
   return `${t}://${e.host}:${e.port}/${a}`;
