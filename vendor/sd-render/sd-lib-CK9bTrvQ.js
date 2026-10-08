@@ -10652,7 +10652,7 @@ const ng = /* @__PURE__ */ z(ff, [["render", sg], ["__scopeId", "data-v-01b66da0
 function oo(e) {
   return e.includes("admin") || e.includes("super");
 }
-const rg = cs(() => import("./sd-render-Dm49jXIi.js").then((e) => e.S)), dg = j({
+const rg = cs(() => import("./sd-render-B3zh6BnM.js").then((e) => e.S)), dg = j({
   name: "SdCrudForm",
   components: {
     SdFormRenderAsync: rg
