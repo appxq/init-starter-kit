@@ -1,5 +1,5 @@
 import { defineComponent as C, inject as z, openBlock as l, createElementBlock as c, normalizeClass as S, renderSlot as Ee, createBlock as a, withCtx as u, createTextVNode as P, toDisplayString as y, createCommentVNode as b, getCurrentInstance as ki, withDirectives as Q, resolveDynamicComponent as N, mergeProps as ie, Fragment as v, renderList as T, vShow as X, resolveComponent as Z, normalizeStyle as j, createSlots as Y, createElementVNode as F, createVNode as h, computed as _, useCssVars as Ke, withModifiers as U, ref as R, nextTick as Oi, reactive as Pi, markRaw as te, h as Ei } from "vue";
-import { aj as I, ak as $i, W as V, al as Ze, am as D, an as E, ao as pe, ap as we, aq as Li, ar as re, as as ji, at as Di, au as Ti, av as Vi, aw as Qe, ax as Ui, ay as zi, az as Bi, aA as Ai, aB as Pe, aC as Ce, aD as Ni, aE as Hi, aF as A, a as Wi, aG as qi, t as Ye, c as Xe, N as Gi, d as Ji, e as Ki, f as Zi, g as Qi, i as _e, J as se, p as oe, q as xe, s as Se, r as ei, aH as Yi, D as Ie, E as Xi, F as ii, O as _i, aI as ti, aJ as xi, aK as et, aL as oi, aM as li, aN as Ve, aO as Ue, aP as ze, aQ as ve, aR as it, aS as tt, aT as ot, aU as lt, aV as nt, G as ni, aW as st, H as rt, aX as si, Q as at, K as ri, aY as ce, m as $e, L as dt, P as ut, M as ai, aZ as ft, a_ as pt, V as mt, n as di, _ as ui, a$ as ht, b0 as ct, b1 as bt, b2 as gt, b3 as Ft, b4 as Be, X as yt, b5 as vt, b6 as wt, j as Ct, k as St } from "./sd-lib-CK9bTrvQ.js";
+import { aj as I, ak as $i, W as V, al as Ze, am as D, an as E, ao as pe, ap as we, aq as Li, ar as re, as as ji, at as Di, au as Ti, av as Vi, aw as Qe, ax as Ui, ay as zi, az as Bi, aA as Ai, aB as Pe, aC as Ce, aD as Ni, aE as Hi, aF as A, a as Wi, aG as qi, t as Ye, c as Xe, N as Gi, d as Ji, e as Ki, f as Zi, g as Qi, i as _e, J as se, p as oe, q as xe, s as Se, r as ei, aH as Yi, D as Ie, E as Xi, F as ii, O as _i, aI as ti, aJ as xi, aK as et, aL as oi, aM as li, aN as Ve, aO as Ue, aP as ze, aQ as ve, aR as it, aS as tt, aT as ot, aU as lt, aV as nt, G as ni, aW as st, H as rt, aX as si, Q as at, K as ri, aY as ce, m as $e, L as dt, P as ut, M as ai, aZ as ft, a_ as pt, V as mt, n as di, _ as ui, a$ as ht, b0 as ct, b1 as bt, b2 as gt, b3 as Ft, b4 as Be, X as yt, b5 as vt, b6 as wt, j as Ct, k as St } from "./sd-lib-CWi4iqd3.js";
 import { useMediaQuery as It, useDark as q } from "@vueuse/core";
 import { ElTag as ae, ElCard as fi, ElTooltip as de, ElIcon as be, ElCollapse as Rt, ElCollapseItem as Mt, ElCol as ge, ElRow as Fe, ElScrollbar as kt, ElSpace as Ot, ElButton as W, ElTabs as Pt, ElTabPane as Et, ElAlert as pi, ElFormItem as mi, ElInput as ye, ElAvatar as $t, ElDialog as Re, ElButtonGroup as Lt, ElPopconfirm as he, ElBadge as jt, ElCheckboxGroup as Dt, ElCheckboxButton as Tt, ElCheckbox as Vt, ElColorPicker as Ut, ElDivider as hi, ElDropdown as zt, ElDropdownMenu as Bt, ElDropdownItem as At, ElUpload as Le, ElAutocomplete as Nt, ElImage as ci, ElLink as Ht, ElInputNumber as Wt, ElInputOtp as qt, ElProgress as Gt, ElRadioGroup as bi, ElRadioButton as Jt, ElRadio as gi, ElRate as Kt, ElSegmented as Zt, ElSelect as Qt, ElOption as Yt, ElSlider as Xt, ElStatistic as _t, ElSteps as xt, ElStep as eo, ElSwitch as io, ElInputTag as to, ElText as oo, ElTimePicker as Fi, ElTimeSelect as lo, ElTour as no, ElTourStep as so, ElForm as ro, ElLoadingDirective as ao } from "element-plus/es";
 import "element-plus/es/components/base/style/index";
@@ -2654,6 +2654,7 @@ const $ = /* @__PURE__ */ I(De, [["render", Hl], ["__scopeId", "data-v-67efe709"
     },
     enable() {
       try {
+        if (this.isFormReadonly()) return;
         this.field.options.disabled === !0 && (this.field.options.disabled = !1);
       } catch (e) {
         this.alert(e.message, "error");
@@ -3109,7 +3110,13 @@ const $ = /* @__PURE__ */ I(De, [["render", Hl], ["__scopeId", "data-v-67efe709"
       this.field.options.readonly = e;
     },
     setDisabled(e) {
-      this.field.options.disabled = e;
+      !e && this.isFormReadonly() || (this.field.options.disabled = e);
+    },
+    // SdFormRender ที่ field นี้อยู่ถูกเปิดด้วย prop disabled (popup readonly / View)
+    isFormReadonly() {
+      if (!this.refList) return !1;
+      const e = this.getFormRef();
+      return !!e && !!e.disabled;
     },
     setAppendButtonVisible(e) {
       this.field.options.appendButton = e;
