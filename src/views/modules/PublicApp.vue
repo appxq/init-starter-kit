@@ -1,6 +1,6 @@
 <template>
 	<div style="display: flex; justify-content: center">
-		<el-row class="m-5" :style="`width: ${options.popupWidth};`">
+		<el-row :class="isMobile ? 'm-3' : 'm-5'" :style="`width: ${isMobile ? 'calc(100% - 1.5rem)' : options.popupWidth};`">
 			<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" v-if="!!options.showHeader && !!options.showApp">
 				<h1 id="page-header" tabindex="-1" style="margin-top: 0px; margin-bottom: 10px; border-bottom: 1px solid var(--el-border-color)">
 					<svg-data v-if="options.iconForm != ''" :svg-data="options.iconForm"></svg-data><svg-icon v-else icon-name="icon-sdform" /> {{ options.popupName }}
@@ -37,12 +37,12 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, onMounted, ref, defineAsyncComponent } from 'vue';
+import { reactive, onMounted, ref, computed, defineAsyncComponent } from 'vue';
 import { useAppStateStore } from '~/stores/AppState';
 import { deepClone } from '~/utils/Util';
 import { useConnectStateStore } from '~/stores/ConnectState';
 import axios from 'axios';
-import { useDark } from '@vueuse/core';
+import { useDark, useWindowSize } from '@vueuse/core';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { API_URL } from '~/config/AppConfig';
@@ -64,6 +64,11 @@ const route = useRoute();
 const router = useRouter();
 
 const formRef = ref(null);
+
+// จอแคบ (มือถือ) → ใช้เต็มจอ ไม่ใช้ popup_size % ที่ตั้งไว้สำหรับจอ desktop
+const MOBILE_BREAKPOINT = 768;
+const { width: windowWidth } = useWindowSize();
+const isMobile = computed(() => windowWidth.value < MOBILE_BREAKPOINT);
 
 const options = reactive({
 	scrollerHeight: 0,
