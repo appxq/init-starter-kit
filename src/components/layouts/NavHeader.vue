@@ -95,7 +95,7 @@
 			<template #title>
 				<!-- เปิดผ่าน setting navbar_unit_switch — instance ที่ยังไม่มีฟอร์ม Organization/Unit Access จะได้ไม่เห็นปุ่ม
 				     navbar_room_switch เปิด section ห้องตรวจ (ต้องมีฟอร์มห้องตรวจ) -->
-				<sd-unit-switcher v-if="!!userState.user && !!appState.params['navbar_unit_switch']" :user-state="userState" :room-enable="!!appState.params['navbar_room_switch']" />
+				<sd-unit-switcher v-if="!!userState.user && !!appState.params['navbar_unit_switch']" :user-state="userState" :room-enable="!!appState.params['navbar_room_switch']" @switched="onUnitSwitched" />
 				<el-divider v-if="!!userState.user && !!appState.params['navbar_unit_switch']" direction="vertical" />
 				<el-badge v-if="!!userState.user" :hidden="!!!options.notifyCount" :value="options.notifyCount" :max="99" class="item" style="right: 6px; display: flex">
 					<el-button link @click.prevent="notifyShow">
@@ -268,6 +268,13 @@ watch(
 
 const configShow = () => {
 	options.configShow = true;
+};
+
+// สลับแผนก/ห้องตรวจสำเร็จ → รีโหลดทั้งแอป (พี่สั่ง 2026-10-24) — หน้า/ฟอร์มที่เปิดค้างถือ context แผนกเดิม
+//   (คิว · สิทธิ์ · ข้อมูลที่โหลดแล้ว) ⇒ โหลดใหม่ให้ทุกอย่างอ่านแผนกใหม่พร้อมกัน
+// switchUnit/switchRoom บันทึก localStorage 'connect' เสร็จก่อน emit 'switched' แล้ว ⇒ รีโหลดได้ทันที
+const onUnitSwitched = () => {
+	window.location.reload();
 };
 
 const viewDetail = (notify: any) => {
