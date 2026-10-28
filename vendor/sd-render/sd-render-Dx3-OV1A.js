@@ -1,5 +1,5 @@
 import { defineComponent as C, inject as z, openBlock as l, createElementBlock as c, normalizeClass as S, renderSlot as Le, createBlock as a, withCtx as u, createTextVNode as P, toDisplayString as y, createCommentVNode as b, getCurrentInstance as Qe, withDirectives as Q, resolveDynamicComponent as N, mergeProps as te, Fragment as v, renderList as T, vShow as X, resolveComponent as Z, normalizeStyle as j, createSlots as Y, createElementVNode as F, createVNode as h, computed as _, useCssVars as Ye, withModifiers as U, ref as R, nextTick as Ei, reactive as $i, markRaw as ie, h as Li } from "vue";
-import { aj as I, ak as ji, W as V, al as Xe, am as D, an as E, ao as pe, ap as we, aq as Di, ar as re, as as Ti, at as Vi, au as Ui, av as zi, aw as _e, ax as Bi, ay as Ai, az as Ni, aA as Hi, aB as $e, aC as Ce, aD as Wi, aE as qi, aF as A, aG as q, a as Gi, aH as Ji, t as xe, c as ei, N as Ki, d as Zi, e as Qi, f as Yi, g as Xi, i as ii, J as se, p as oe, q as ti, s as Se, r as oi, aI as _i, aJ as Ie, D as Re, E as xi, F as li, O as et, aK as ni, aL as it, aM as tt, aN as si, aO as ri, aP as ze, aQ as Be, aR as Ae, aS as ve, aT as ot, aU as lt, aV as nt, aW as st, aX as rt, G as ai, aY as at, H as dt, aZ as di, Q as ut, K as ui, a_ as ce, m as je, L as ft, P as pt, M as fi, a$ as mt, b0 as ht, V as ct, n as pi, _ as mi, b1 as bt, b2 as gt, b3 as Ft, b4 as yt, b5 as vt, b6 as wt, b7 as Ct, b8 as ke, X as St, b9 as It, ba as Rt, bb as Mt, j as kt, k as Ot } from "./sd-lib-CUlr5W4Z.js";
+import { aj as I, ak as ji, W as V, al as Xe, am as D, an as E, ao as pe, ap as we, aq as Di, ar as re, as as Ti, at as Vi, au as Ui, av as zi, aw as _e, ax as Bi, ay as Ai, az as Ni, aA as Hi, aB as $e, aC as Ce, aD as Wi, aE as qi, aF as A, aG as q, a as Gi, aH as Ji, t as xe, c as ei, N as Ki, d as Zi, e as Qi, f as Yi, g as Xi, i as ii, J as se, p as oe, q as ti, s as Se, r as oi, aI as _i, aJ as Ie, D as Re, E as xi, F as li, O as et, aK as ni, aL as it, aM as tt, aN as si, aO as ri, aP as ze, aQ as Be, aR as Ae, aS as ve, aT as ot, aU as lt, aV as nt, aW as st, aX as rt, G as ai, aY as at, H as dt, aZ as di, Q as ut, K as ui, a_ as ce, m as je, L as ft, P as pt, M as fi, a$ as mt, b0 as ht, V as ct, n as pi, _ as mi, b1 as bt, b2 as gt, b3 as Ft, b4 as yt, b5 as vt, b6 as wt, b7 as Ct, b8 as ke, X as St, b9 as It, ba as Rt, bb as Mt, j as kt, k as Ot } from "./sd-lib-uScCJg4f.js";
 import { useMediaQuery as Pt } from "@vueuse/core";
 import { ElTag as ae, ElCard as hi, ElTooltip as de, ElIcon as be, ElCollapse as Et, ElCollapseItem as $t, ElCol as ge, ElRow as Fe, ElScrollbar as Lt, ElSpace as jt, ElButton as W, ElTabs as Dt, ElTabPane as Tt, ElAlert as ci, ElFormItem as bi, ElInput as ye, ElAvatar as Vt, ElDialog as Me, ElButtonGroup as Ut, ElPopconfirm as he, ElBadge as zt, ElCheckboxGroup as Bt, ElCheckboxButton as At, ElCheckbox as Nt, ElColorPicker as Ht, ElDivider as gi, ElDropdown as Wt, ElDropdownMenu as qt, ElDropdownItem as Gt, ElUpload as De, ElAutocomplete as Jt, ElImage as Fi, ElLink as Kt, ElInputNumber as Zt, ElInputOtp as Qt, ElProgress as Yt, ElRadioGroup as yi, ElRadioButton as Xt, ElRadio as vi, ElRate as _t, ElSegmented as xt, ElSelect as eo, ElOption as io, ElSlider as to, ElStatistic as oo, ElSteps as lo, ElStep as no, ElSwitch as so, ElInputTag as ro, ElText as ao, ElTimePicker as wi, ElTimeSelect as uo, ElTour as fo, ElTourStep as po, ElForm as mo, ElLoadingDirective as ho } from "element-plus/es";
 import "element-plus/es/components/base/style/index";
@@ -5137,6 +5137,13 @@ const rs = /* @__PURE__ */ I(ns, [["render", ss], ["__scopeId", "data-v-5bfdb1e5
     stateScope() {
       return `${this.globalModel?.sdformModel?.dataid || ""}.${this.field.options.name || ""}`;
     },
+    // parent ที่ grid จะได้ถ้าฟอร์มลูก joiner มาที่ฟอร์มนี้ — เงื่อนไขเดียวกับ parentId (CoreFieldMixin) ยกเว้นเช็ค getParentFormId
+    // parentId รู้ค่าได้หลัง grid โหลด model ฟอร์มลูกเสร็จ (ต้องรู้ joiner) → ส่งค่านี้ไปให้ grid กรองตั้งแต่ request แรก
+    // ไม่งั้น grid ยิงแบบไม่กรองไปก่อน 1 รอบ (นับทั้งตาราง) แล้วค่อยยิงแบบกรองตาม
+    expectParent() {
+      const e = this.getFormRef();
+      return this.field.options.defaultFilterParent && !this.field.options.dependEnable && e && e.sdform && e.sdform._id && e.formDataId ? { formId: e.sdform._id, dataId: e.formDataId } : null;
+    },
     dataProvider() {
       if ((this.field.options.where || this.field.options.orderBy) && this.field.options.formId) {
         const e = {
@@ -5303,6 +5310,7 @@ function us(e, i, t, o, n, m) {
         "state-key": !!e.field.options.rememberState,
         "state-scope": e.stateScope,
         "parent-id": e.parentId,
+        "expect-parent": e.expectParent,
         params: e.params,
         "init-data": e.field.options.initData ? e.field.options.initData : {},
         readonly: e.field.options.readonly || e.field.options.disabled,
@@ -5502,12 +5510,12 @@ function us(e, i, t, o, n, m) {
           ], 64))), 256)) : b("", !0)
         ]),
         _: 1
-      }, 8, ["form-id", "provider-type", "data-provider", "state-key", "state-scope", "parent-id", "params", "init-data", "readonly", "resizable", "index-column", "system-column", "action-enable", "action-crud-enable", "title-enable", "rawdata-btn-enable", "export-btn-enable", "export-row-btn-enable", "add-btn-enable", "add-btn-label", "action-label", "action-width", "display-fields", "search-fields", "aggr-column", "edit-column", "sum-column", "expand-count-children-name", "expand-provider", "clone-enable-label-field", "height", "max-height", "icon-name", "key-id", "row-key", "placeholder-search", "subform-width", "sum-decimal", "sum-label", "total-inline", "sum-all-page", "title-name", "group-key", "limit-row", "infinite-scroll", "allow-delete-func", "allow-clone-func", "enable-ws", "parent-path", "insert-before", "update-before", "view-before", "before-save", "after-delete", "user-state", "build-state"]))
+      }, 8, ["form-id", "provider-type", "data-provider", "state-key", "state-scope", "parent-id", "expect-parent", "params", "init-data", "readonly", "resizable", "index-column", "system-column", "action-enable", "action-crud-enable", "title-enable", "rawdata-btn-enable", "export-btn-enable", "export-row-btn-enable", "add-btn-enable", "add-btn-label", "action-label", "action-width", "display-fields", "search-fields", "aggr-column", "edit-column", "sum-column", "expand-count-children-name", "expand-provider", "clone-enable-label-field", "height", "max-height", "icon-name", "key-id", "row-key", "placeholder-search", "subform-width", "sum-decimal", "sum-label", "total-inline", "sum-all-page", "title-name", "group-key", "limit-row", "infinite-scroll", "allow-delete-func", "allow-clone-func", "enable-ws", "parent-path", "insert-before", "update-before", "view-before", "before-save", "after-delete", "user-state", "build-state"]))
     ]),
     _: 1
   }, 8, ["build-rules", "field", "builder", "builder-status", "parent-field", "parent-list", "index-of-parent-list", "sub-form-row-index", "sub-form-col-index", "style", "sub-form-row-id"])) : b("", !0);
 }
-const fs = /* @__PURE__ */ I(ds, [["render", us], ["__scopeId", "data-v-a3c7e55e"]]), ps = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const fs = /* @__PURE__ */ I(ds, [["render", us], ["__scopeId", "data-v-1ad6ef84"]]), ps = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: fs
 }, Symbol.toStringTag, { value: "Module" })), ms = C({
