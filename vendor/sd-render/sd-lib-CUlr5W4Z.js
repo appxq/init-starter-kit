@@ -10675,7 +10675,7 @@ const Fg = /* @__PURE__ */ H(Ef, [["render", Cg], ["__scopeId", "data-v-a7415a16
 function uo(e) {
   return e.includes("admin") || e.includes("super");
 }
-const _g = Fs(() => import("./sd-render-D_Aaevvj.js").then((e) => e.S)), Dg = U({
+const _g = Fs(() => import("./sd-render-D4YievEM.js").then((e) => e.S)), Dg = U({
   name: "SdCrudForm",
   components: {
     SdFormRenderAsync: _g
@@ -11158,8 +11158,9 @@ const Eo = /* @__PURE__ */ H(Dg, [["render", $g]]), Tg = /* @__PURE__ */ Object.
         (e.created_by.id === t.user_id || uo(t.roles)) && (a = !0);
       else if (e.app_share === "assign") {
         const i = e.app_assign_roles, o = t.roles;
-        uo(t.roles) ? a = !0 : o.forEach((l) => {
-          if (i.includes(l)) {
+        let l = [];
+        Array.isArray(i) ? l = i : i && typeof i == "object" && i.value && (l = Array.isArray(i.value) ? i.value : [i.value]), uo(t.roles) ? a = !0 : o.forEach((s) => {
+          if (l.includes(s)) {
             a = !0;
             return;
           }
@@ -11356,7 +11357,7 @@ function Hg(e, t, a, i, o, l) {
     ])) : w("", !0)
   ], 64);
 }
-const T$ = /* @__PURE__ */ H(Mg, [["render", Hg], ["__scopeId", "data-v-1446cb78"]]);
+const T$ = /* @__PURE__ */ H(Mg, [["render", Hg], ["__scopeId", "data-v-0d4717c0"]]);
 tu.register(
   au,
   iu,
