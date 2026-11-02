@@ -10675,7 +10675,7 @@ const Fg = /* @__PURE__ */ H(Ef, [["render", Cg], ["__scopeId", "data-v-a7415a16
 function uo(e) {
   return e.includes("admin") || e.includes("super");
 }
-const _g = Fs(() => import("./sd-render-Dx3-OV1A.js").then((e) => e.S)), Dg = U({
+const _g = Fs(() => import("./sd-render-Br68I4mK.js").then((e) => e.S)), Dg = U({
   name: "SdCrudForm",
   components: {
     SdFormRenderAsync: _g
@@ -15056,7 +15056,7 @@ const Ab = U({
     },
     handleRemoveTag(e) {
       const t = this.multiSelected.findIndex((a) => !!a[this.valueField] && a[this.valueField] === e);
-      this.multiSelected.splice(t, 1);
+      t > -1 && this.multiSelected.splice(t, 1);
     },
     setAllMulti(e, t) {
       for (const a of e) {
@@ -15141,8 +15141,15 @@ const Ab = U({
     // คืน raw doc ของ item ที่เลือก (มี field ดิบครบ) — ไม่มี raw จริง → null (อย่าคืน snapshot {value,label} มา render template)
     // value เป็น object: ใช้ _raw ถ้ามี → ไม่งั้นหา raw doc จาก list ที่โหลดมา → ไม่เจอคืน null
     // value เป็น scalar: หาใน rawData ด้วย valueField → ไม่เจอคืน null
+    // rawData ถูกแทนทุกครั้งที่ค้น/เปิด dropdown (โหลดแค่ limit แถวแรก) → ค่าที่เลือกไว้แต่ไม่อยู่ในหน้านั้นจะหาไม่เจอ
+    // แล้ว tag (multiple) โชว์ id แทนชื่อ — เลยหาใน multiSelected (raw ของค่าที่เลือกไว้) ต่อด้วย
     labelRaw(e) {
-      return e && typeof e == "object" ? e._raw ? e._raw : this.rawData.find((t) => t[this.valueField] === e.value) ?? null : this.rawData.find((t) => t[this.valueField] === e) ?? null;
+      if (e && typeof e == "object") {
+        if (e._raw) return e._raw;
+        e = e.value;
+      }
+      const t = (a) => a[this.valueField] === e;
+      return this.rawData.find(t) ?? this.multiSelected.find(t) ?? null;
     },
     // ข้อความที่โชว์ในช่อง select เมื่อเลือกค่าแล้ว:
     // มี raw doc → convert ตาม schema; ไม่มี raw (ยังไม่โหลด list) → fallback label snapshot ที่ติดมากับค่าเลย
