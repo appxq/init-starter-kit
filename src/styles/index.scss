@@ -106,6 +106,13 @@ code {
   padding-bottom: 2px!important;
 }
 
+// select ที่ตั้ง persistent=false (select-input.vue, SdSelectRemoteList.vue): ตอนเริ่มปิด option ถูกถอดออก
+// แต่ dropdown ยังจางอยู่ → EP วาดกล่อง empty ที่ไม่มีข้อความ สูงขึ้น 20px → ช่องใกล้ขอบล่าง popup พลิกขึ้นบน 1 เฟรม (กระพริบ)
+// ซ่อนเฉพาะกล่องที่ไม่มีข้อความ — "Loading" / "No data" ยังขึ้นปกติ
+.el-select-dropdown__empty:has(> span:empty) {
+  display: none;
+}
+
 .el-dialog .el-dialog__title {
 	font-size: 24px;
 }
