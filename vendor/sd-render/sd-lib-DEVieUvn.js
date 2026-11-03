@@ -7642,15 +7642,15 @@ function cf(e) {
     maxZoom: 19
   };
 }
-const un = '<svg width="28" height="40" viewBox="0 0 28 40"><path d="M14 1C7 1 1.5 6.5 1.5 13.5 1.5 23 14 39 14 39s12.5-16 12.5-25.5C26.5 6.5 21 1 14 1z"/><circle cx="14" cy="13.5" r="4.5"/></svg>', Xe = async (e, t, a) => await be.post(
+const un = '<svg width="28" height="40" viewBox="0 0 28 40"><path d="M14 1C7 1 1.5 6.5 1.5 13.5 1.5 23 14 39 14 39s12.5-16 12.5-25.5C26.5 6.5 21 1 14 1z"/><circle cx="14" cy="13.5" r="4.5"/></svg>', Xe = async (e, t, a, i = !1) => await be.post(
   `${a.host}/widget/crud/getdata-all`,
-  { sdProvider: e, totalEnable: t },
+  i ? { sdProvider: e, totalEnable: t, noCache: !0 } : { sdProvider: e, totalEnable: t },
   {
     headers: {
       Authorization: `Bearer ${a.user?.token}`
     }
   }
-).then((o) => o.data && o.data.message ? { response: !0, data: o.data, message: o.data.message } : { response: !1, data: null, message: "Can't get data" }).catch((o) => o.response && o.response.data && o.response.data.message ? { response: !1, data: null, message: o.response.data.message } : { response: !1, data: null, message: "Can't get data (error)" }), Ft = async (e, t) => await be.post(
+).then((l) => l.data && l.data.message ? { response: !0, data: l.data, message: l.data.message } : { response: !1, data: null, message: "Can't get data" }).catch((l) => l.response && l.response.data && l.response.data.message ? { response: !1, data: null, message: l.response.data.message } : { response: !1, data: null, message: "Can't get data (error)" }), Ft = async (e, t) => await be.post(
   `${t.host}/widget/crud/getdata-one`,
   { sdProvider: e },
   {
@@ -10675,7 +10675,7 @@ const Fg = /* @__PURE__ */ H(Ef, [["render", Cg], ["__scopeId", "data-v-a7415a16
 function uo(e) {
   return e.includes("admin") || e.includes("super");
 }
-const _g = Fs(() => import("./sd-render-Br68I4mK.js").then((e) => e.S)), Dg = U({
+const _g = Fs(() => import("./sd-render-BVFweqrY.js").then((e) => e.S)), Dg = U({
   name: "SdCrudForm",
   components: {
     SdFormRenderAsync: _g
@@ -25045,7 +25045,7 @@ const Zy = U({
         e.pdf_form_id && (s = e.pdf_form_id);
         const r = await He(s, this.useUserState);
         r && r.data && (l = r.data);
-        const d = await Xe(o, !1, this.useUserState);
+        const d = await Xe(o, !1, this.useUserState, !0);
         if (d && d.response && d.data && d.data.data) {
           const h = L(d.data.data);
           let f = {};
@@ -25140,7 +25140,7 @@ const Zy = U({
         e.pdf_form_id && (h = e.pdf_form_id);
         const f = await He(h, this.useUserState);
         f && f.data && (d = f.data);
-        const m = await Xe(s, !1, this.useUserState);
+        const m = await Xe(s, !1, this.useUserState, !0);
         if (m && m.response && m.data && m.data.data) {
           const S = L(m.data.data);
           await Ky(S);
@@ -25952,7 +25952,7 @@ function ov(e, t, a, i, o, l) {
     ])) : w("", !0)
   ], 64);
 }
-const j$ = /* @__PURE__ */ H(Zy, [["render", ov], ["__scopeId", "data-v-e1723884"]]), lv = U({
+const j$ = /* @__PURE__ */ H(Zy, [["render", ov], ["__scopeId", "data-v-3f7c9c37"]]), lv = U({
   name: "SdUiCarousel",
   components: {},
   props: {
