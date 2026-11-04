@@ -10675,7 +10675,7 @@ const Fg = /* @__PURE__ */ H(Ef, [["render", Cg], ["__scopeId", "data-v-a7415a16
 function uo(e) {
   return e.includes("admin") || e.includes("super");
 }
-const _g = Fs(() => import("./sd-render-BVFweqrY.js").then((e) => e.S)), Dg = U({
+const _g = Fs(() => import("./sd-render-D8TtNNS9.js").then((e) => e.S)), Dg = U({
   name: "SdCrudForm",
   components: {
     SdFormRenderAsync: _g
@@ -14877,6 +14877,8 @@ const Ab = U({
       rawData: [],
       itemSelected: {},
       formModel: {},
+      // โหลด formModel ใน created() เป็น async — getDataOne/getDataAll ต้องรอตัวนี้ก่อนแปลงข้อมูล (getItemsList อ่าน formModel.joiner_field)
+      formModelReady: Promise.resolve(),
       formId: "",
       loading: !1,
       htmlRender: ca,
@@ -14974,14 +14976,7 @@ const Ab = U({
     }
   },
   async created() {
-    if (this.userState.host && (this.apiUrl = this.userState.host), this.dataProvider && (this.searchField && this.searchField.length > 0 ? this.search = L(this.searchField) : this.search = L(this.labelField), this.optionProvider.search = this.search, this.dataProvider.params || (this.dataProvider.params = {}), this.dataProvider.options ? (this.dataProvider.options.page || (this.dataProvider.options.page = 1), this.dataProvider.options.limit || (this.dataProvider.options.limit = this.limit), this.dataProvider.options.search = this.search, this.optionProvider = this.dataProvider.options) : this.dataProvider.options = this.optionProvider, this.defaultParams = L(this.dataProvider.params), this.defaultSort = L(this.optionProvider.orderBy), this.defaultFilter = L(this.optionProvider.fileter), this.defaultWhere = this.optionProvider.where ? this.optionProvider.where : "", (this.joinerObject || this.formBtnEnable || this.needTemplateRaw) && (this.formId = this.dataProvider.providerId, this.dataProvider.providerType == "FORM")))
-      if (this.userState.formStore[this.formId])
-        this.formModel = L(this.userState.formStore[this.formId]);
-      else if (this.useUserState) {
-        const e = await Lb(this.formId, this.useUserState);
-        e.response && e.data ? e.data.dataid && (this.userState.formStore[this.formId] = L(e.data), this.formModel = L(e.data)) : B.warning("Form not found.");
-      } else
-        B.warning("UserState not found.");
+    this.userState.host && (this.apiUrl = this.userState.host), this.dataProvider && (this.searchField && this.searchField.length > 0 ? this.search = L(this.searchField) : this.search = L(this.labelField), this.optionProvider.search = this.search, this.dataProvider.params || (this.dataProvider.params = {}), this.dataProvider.options ? (this.dataProvider.options.page || (this.dataProvider.options.page = 1), this.dataProvider.options.limit || (this.dataProvider.options.limit = this.limit), this.dataProvider.options.search = this.search, this.optionProvider = this.dataProvider.options) : this.dataProvider.options = this.optionProvider, this.defaultParams = L(this.dataProvider.params), this.defaultSort = L(this.optionProvider.orderBy), this.defaultFilter = L(this.optionProvider.fileter), this.defaultWhere = this.optionProvider.where ? this.optionProvider.where : "", (this.joinerObject || this.formBtnEnable || this.needTemplateRaw) && (this.formId = this.dataProvider.providerId, this.dataProvider.providerType == "FORM" && (this.formModelReady = this.loadFormModel(), await this.formModelReady)));
   },
   setup(e, t) {
     return {
@@ -14992,6 +14987,15 @@ const Ab = U({
     this.value && !this.multiple && await this.getSelectData(this.value), this.$emit("ready");
   },
   methods: {
+    async loadFormModel() {
+      if (this.userState.formStore[this.formId])
+        this.formModel = L(this.userState.formStore[this.formId]);
+      else if (this.useUserState) {
+        const e = await Lb(this.formId, this.useUserState);
+        e.response && e.data ? e.data.dataid && (this.userState.formStore[this.formId] = L(e.data), this.formModel = L(e.data)) : B.warning("Form not found.");
+      } else
+        B.warning("UserState not found.");
+    },
     async getSelectData(e, t, a = !1) {
       if (e)
         if (this.multiple) {
@@ -15200,8 +15204,8 @@ const Ab = U({
             Authorization: `Bearer ${this.userState.user?.token}`
           }
         }
-      ).then((a) => {
-        a && a.data && a.data.data && (this.rawData = L(a.data.data), this.multiItemsList(a.data.data), t && t(this.rawData)), this.loading = !1;
+      ).then(async (a) => {
+        a && a.data && a.data.data && (await this.formModelReady, this.rawData = L(a.data.data), this.multiItemsList(a.data.data), t && t(this.rawData)), this.loading = !1;
       }).catch((a) => {
         a.response && a.response.data && a.response.data.message ? B.warning(a.response.data.message) : B.warning(a.message), this.loading = !1, this.itemsList = [];
       });
@@ -15215,8 +15219,8 @@ const Ab = U({
             Authorization: `Bearer ${this.userState.user?.token}`
           }
         }
-      ).then((a) => {
-        a.data && a.data.message && (this.itemSelected = L(a.data.data), this.addRawData(this.itemSelected), this.multiItemsList(this.rawData), t && t(this.itemSelected)), this.loading = !1;
+      ).then(async (a) => {
+        a.data && a.data.message && (await this.formModelReady, this.itemSelected = L(a.data.data), this.addRawData(this.itemSelected), this.multiItemsList(this.rawData), t && t(this.itemSelected)), this.loading = !1;
       }).catch((a) => {
         this.loading = !1;
       });
