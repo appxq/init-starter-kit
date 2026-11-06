@@ -147,7 +147,7 @@ const login2FAForm = (formEl: FormInstance | undefined) => {
 		if (valid) {
 			userState.login2fa({
 				token: verify2FA.token,
-				username: userState.user2Fa,
+				mfa_ticket: userState.mfaTicket,
 			});
 		}
 	});

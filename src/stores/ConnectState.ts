@@ -49,6 +49,8 @@ export const useConnectStateStore = defineStore('connectState', {
 		returnUrl: null as any,
 		require2FA: false,
 		user2Fa: '',
+		// ตั๋วจาก /login (รหัสผ่านถูกแล้ว) — ต้องส่งคู่กับ OTP ไป /login2fa · อยู่ใน memory เท่านั้น ไม่ลง localStorage
+		mfaTicket: '',
 		refreshTokenTimeout: null as any,
 		host: API_URL, //API_URL
 		router: useRouter(),
@@ -246,6 +248,7 @@ export const useConnectStateStore = defineStore('connectState', {
 						if (!!response.data.two_factor_enabled) {
 							this.require2FA = true;
 							this.user2Fa = response.data.username || response.data.user_id;
+							this.mfaTicket = response.data.mfa_ticket || '';
 						} else {
 							localStorage.setItem('connect', JSON.stringify(response.data));
 							this.user = response.data;
