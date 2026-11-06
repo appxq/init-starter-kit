@@ -148,6 +148,9 @@ const login2FAForm = (formEl: FormInstance | undefined) => {
 			userState.login2fa({
 				token: verify2FA.token,
 				mfa_ticket: userState.mfaTicket,
+				// backend รุ่นก่อนตั๋วยังบังคับ username ใน schema — ส่งไว้ให้ deploy frontend ก่อน backend ได้
+				// backend ใหม่ไม่ใช้ค่านี้ (อ่านชื่อ user จากตั๋วเท่านั้น)
+				username: userState.user2Fa,
 			});
 		}
 	});
